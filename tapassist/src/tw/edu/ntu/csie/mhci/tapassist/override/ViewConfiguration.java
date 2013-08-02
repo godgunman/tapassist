@@ -426,7 +426,8 @@ public class ViewConfiguration {
 			classAppGlobals = Class.forName("android.app.AppGlobals");
 			Object objectAppGlobals = classAppGlobals.newInstance();
 			
-			Method methodGetIntCoreSetting = Class.forName("android.app.AppGlobals").getMethod("getIntCoreSetting", String.class, int.class);
+			Method methodGetIntCoreSetting = Class.forName("android.app.AppGlobals").getDeclaredMethod("getIntCoreSetting", String.class, int.class);
+			methodGetIntCoreSetting.setAccessible(true);
 			return (Integer) methodGetIntCoreSetting.invoke(objectAppGlobals, "long_press_timeout", DEFAULT_LONG_PRESS_TIMEOUT);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
