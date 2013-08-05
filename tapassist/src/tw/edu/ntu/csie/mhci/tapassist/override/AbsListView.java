@@ -15,6 +15,8 @@
  */
 package tw.edu.ntu.csie.mhci.tapassist.override;
 
+import java.lang.reflect.Field;
+
 import android.content.Context;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -30,12 +32,38 @@ public abstract class AbsListView extends android.widget.AbsListView {
 
 	public AbsListView(Context context) {
 		super(context);
-		// TODO Auto-generated constructor stub
 	}
 
-	/*
+	@SuppressWarnings("unchecked")
+	private <T> T getSupperclassField(String name, Class<T> cls) {
+		try {
+			Field field = AbsListView.class.getSuperclass().getDeclaredField(name);
+			return  (T) field.get(this);
+		} catch (NoSuchFieldException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 	
-	//FIXME(ggm)
+	private void setValueToSupperclassField(String name, Object value) {
+		try {
+			Field field = AbsListView.class.getSuperclass().getDeclaredField(name);
+			field.set(this, value);
+		} catch (NoSuchFieldException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	private void initAbsListView() {
 		// Setting focusable in touch mode will set the focusable property to
 		// true
@@ -45,16 +73,23 @@ public abstract class AbsListView extends android.widget.AbsListView {
 		setAlwaysDrawnWithCacheEnabled(false);
 		setScrollingCacheEnabled(true);
 
+		/**
+		 * reflection 
+		 * @author ggm
+		 */
+		Context mContext = getSupperclassField("mContext", Context.class);
 		final ViewConfiguration configuration = ViewConfiguration.get(mContext);
-		mTouchSlop = configuration.getScaledTouchSlop();
-		mMinimumVelocity = configuration.getScaledMinimumFlingVelocity();
-		mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
-		mOverscrollDistance = configuration.getScaledOverscrollDistance();
-		mOverflingDistance = configuration.getScaledOverflingDistance();
 
-		mDensityScale = getContext().getResources().getDisplayMetrics().density;
+		setValueToSupperclassField("mTouchSlop", configuration.getScaledTouchSlop());
+		setValueToSupperclassField("mMinimumVelocity",configuration.getScaledMinimumFlingVelocity());
+		setValueToSupperclassField("mMaximumVelocity",configuration.getScaledMaximumFlingVelocity());
+		setValueToSupperclassField("mOverscrollDistance",configuration.getScaledOverscrollDistance());
+		setValueToSupperclassField("mOverflingDistance",configuration.getScaledOverflingDistance());
+		setValueToSupperclassField("mDensityScale",getContext().getResources().getDisplayMetrics().density);
+		
 	}
-
+	
+	/*
 	//FIXME(ggm)
 	void keyPressed() {
 		if (!isEnabled() || !isClickable()) {
