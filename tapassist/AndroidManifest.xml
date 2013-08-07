@@ -5,8 +5,11 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="8"
+        android:minSdkVersion="15"
         android:targetSdkVersion="17" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
@@ -16,6 +19,10 @@
         <activity
             android:name="tw.edu.ntu.csie.mhci.tapassist.MainActivity"
             android:label="@string/app_name" >
+        </activity>
+        <activity android:name=".testing.ScrollingCaseActivity" >
+        </activity>
+        <activity android:name=".testing.TappingCaseActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
