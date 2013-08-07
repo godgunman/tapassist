@@ -1,9 +1,12 @@
 package tw.edu.ntu.csie.mhci.tapassist.testing;
 
+import java.util.Random;
+
 import tw.edu.ntu.csie.mhci.tapassist.R;
 import tw.edu.ntu.csie.mhci.tapassist.utils.Layout;
 import tw.edu.ntu.csie.mhci.tapassist.utils.Media;
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -11,12 +14,16 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class TappingCaseActivity extends Activity {
 
 	private RelativeLayout outerTapImage;
 	private ImageView tapImage;
+	private TextView taskNumText;
+
+	private int taskNum = 1;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -25,9 +32,52 @@ public class TappingCaseActivity extends Activity {
 
 		outerTapImage = (RelativeLayout) findViewById(R.id.outerTapImage);
 		tapImage = (ImageView) findViewById(R.id.tapImage);
-		
+		taskNumText = (TextView) findViewById(R.id.taskNum);
+
 		outerTapImage.setOnTouchListener(outerTapImageTouchListener);
 		tapImage.setOnTouchListener(tapImageTouchListener);
+	}
+
+	private void nextTask() {
+
+		AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+
+			@Override
+			protected void onPreExecute() {
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				tapImage.setVisibility(View.GONE);
+			}
+
+			@Override
+			protected void onPostExecute(Void result) {
+				Random r = new Random();
+				float x = 50 + r.nextFloat() * (outerTapImage.getWidth() - 200);
+				float y = 50 + r.nextFloat()
+						* (outerTapImage.getHeight() - 200);
+
+				tapImage.setX(x);
+				tapImage.setY(y);
+				tapImage.setVisibility(View.VISIBLE);
+
+				taskNum++;
+				taskNumText.setText("Task " + taskNum);
+			}
+
+			@Override
+			protected Void doInBackground(Void... params) {
+				try {
+					Thread.sleep(1500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				return null;
+			}
+		};
+		task.execute();
 	}
 
 	private OnTouchListener tapImageTouchListener = new OnTouchListener() {
@@ -61,6 +111,7 @@ public class TappingCaseActivity extends Activity {
 				Media.play(TappingCaseActivity.this, "right.mp3");
 				Log.d("TappingCaseActivity", "tapImage:ACTION_UP");
 				tapImage.setImageResource(R.drawable.face_normal);
+				nextTask();
 				break;
 			case MotionEvent.ACTION_CANCEL:
 				Log.d("TappingCaseActivity", "tapImage:ACTION_CANCEL");
@@ -74,7 +125,7 @@ public class TappingCaseActivity extends Activity {
 			return true;
 		}
 	};
-	
+
 	private OnTouchListener outerTapImageTouchListener = new OnTouchListener() {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
@@ -93,6 +144,7 @@ public class TappingCaseActivity extends Activity {
 			case MotionEvent.ACTION_UP:
 				Log.d("TappingCaseActivity", "outerTapImage:ACTION_UP");
 				tapImage.setImageResource(R.drawable.face_normal);
+				nextTask();
 				break;
 			case MotionEvent.ACTION_CANCEL:
 				Log.d("TappingCaseActivity", "outerTapImage:ACTION_CANCEL");
@@ -104,5 +156,5 @@ public class TappingCaseActivity extends Activity {
 			}
 			return true;
 		}
-	};  
+	};
 }
