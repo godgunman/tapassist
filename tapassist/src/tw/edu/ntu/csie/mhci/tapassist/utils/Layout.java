@@ -16,7 +16,7 @@ public class Layout {
 				.getTop();
 		int TitleBarHeight = contentViewTop - StatusBarHeight;
 
-		Log.i("debug", "StatusBar Height= " + StatusBarHeight
+		Log.i("Layout.getStatusBar", "StatusBar Height= " + StatusBarHeight
 				+ " , TitleBar Height = " + TitleBarHeight);
 		return contentViewTop;
 	}

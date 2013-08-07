@@ -10,18 +10,6 @@ public class Media {
 
 	public static void play(Context context, String fileStr) {
 
-		// try {
-		// AssetFileDescriptor descriptor = context.getAssets()
-		// .openFd(fileStr);
-		// MediaPlayer meidaPlayer = new MediaPlayer();
-		// meidaPlayer.setDataSource(descriptor.getFileDescriptor(),
-		// descriptor.getStartOffset(), descriptor.getLength());
-		// descriptor.close();
-		//
-		// } catch (IOException e1) {
-		// // TODO Auto-generated catch block
-		// e1.printStackTrace();
-		// }
 		try {
 			AssetFileDescriptor afd = context.getAssets().openFd(fileStr);
 			MediaPlayer meidaPlayer = new MediaPlayer();
