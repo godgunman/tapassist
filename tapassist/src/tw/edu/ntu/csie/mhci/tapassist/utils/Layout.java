@@ -18,6 +18,6 @@ public class Layout {
 
 		Log.i("debug", "StatusBar Height= " + StatusBarHeight
 				+ " , TitleBar Height = " + TitleBarHeight);
-		return TitleBarHeight;
+		return contentViewTop;
 	}
 }
