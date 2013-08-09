@@ -3,11 +3,28 @@
     android:id="@+id/outerTapImage"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin" >
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/inforRelativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/darker_gray" >
+
+        <TextView
+            android:id="@+id/taskNumText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:text="Task:" />
+
+        <TextView
+            android:id="@+id/timeCounterText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="1 second" />
+    </RelativeLayout>
 
     <ImageView
         android:id="@+id/tapImage"
@@ -18,13 +35,5 @@
         android:layout_marginLeft="59dp"
         android:layout_marginTop="44dp"
         android:src="@drawable/face_normal" />
-
-    <TextView
-        android:id="@+id/taskNumText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:text="Task 1" />
 
 </RelativeLayout>

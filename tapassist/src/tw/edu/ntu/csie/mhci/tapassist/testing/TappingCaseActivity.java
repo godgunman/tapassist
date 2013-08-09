@@ -6,8 +6,12 @@ import tw.edu.ntu.csie.mhci.tapassist.R;
 import tw.edu.ntu.csie.mhci.tapassist.utils.Layout;
 import tw.edu.ntu.csie.mhci.tapassist.utils.Media;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,11 +23,19 @@ import android.widget.Toast;
 
 public class TappingCaseActivity extends Activity {
 
+	private static final long ALL_TASK_TIMEOUT = 300 * 1000;
+
 	private RelativeLayout outerTapImage;
 	private ImageView tapImage;
 	private TextView taskNumText;
+	private TextView timeCounterText;
+
+	private Handler handler = new Handler();
 
 	private int taskNum = 1;
+	private long startTime = 1;
+	
+	private boolean isTouchAvailable;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -33,9 +45,13 @@ public class TappingCaseActivity extends Activity {
 		outerTapImage = (RelativeLayout) findViewById(R.id.outerTapImage);
 		tapImage = (ImageView) findViewById(R.id.tapImage);
 		taskNumText = (TextView) findViewById(R.id.taskNumText);
+		timeCounterText = (TextView) findViewById(R.id.timeCounterText);
 
 		outerTapImage.setOnTouchListener(outerTapImageTouchListener);
 		tapImage.setOnTouchListener(tapImageTouchListener);
+
+		handler.postDelayed(timeCounter, 1000);
+		nextTask();
 	}
 
 	private void nextTask() {
@@ -50,6 +66,7 @@ public class TappingCaseActivity extends Activity {
 					e.printStackTrace();
 				}
 				tapImage.setVisibility(View.GONE);
+				isTouchAvailable = false;
 			}
 
 			@Override
@@ -65,6 +82,8 @@ public class TappingCaseActivity extends Activity {
 
 				taskNum++;
 				taskNumText.setText("Task " + taskNum);
+				
+				isTouchAvailable = true;
 			}
 
 			@Override
@@ -108,8 +127,8 @@ public class TappingCaseActivity extends Activity {
 						- Layout.getStatusBar(TappingCaseActivity.this));
 				break;
 			case MotionEvent.ACTION_UP:
-				Media.play(TappingCaseActivity.this, "right.mp3");
 				Log.d("TappingCaseActivity", "tapImage:ACTION_UP");
+				Media.play(TappingCaseActivity.this, "right.mp3");
 				tapImage.setImageResource(R.drawable.face_normal);
 				nextTask();
 				break;
@@ -129,6 +148,11 @@ public class TappingCaseActivity extends Activity {
 	private OnTouchListener outerTapImageTouchListener = new OnTouchListener() {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
+
+			if (isTouchAvailable == false) {
+				return false;
+			}
+
 			int action = event.getAction();
 			switch (action) {
 			case MotionEvent.ACTION_DOWN:
@@ -136,20 +160,23 @@ public class TappingCaseActivity extends Activity {
 				Log.d("TappingCaseActivity", "outerTapImage:ACTION_DOWN");
 				tapImage.setImageResource(R.drawable.face_bad);
 				break;
+
 			case MotionEvent.ACTION_MOVE:
-				Media.play(TappingCaseActivity.this, "miss.mp3");
 				Log.d("TappingCaseActivity", "outerTapImage:ACTION_MOVE");
 				tapImage.setImageResource(R.drawable.face_bad);
 				break;
+
 			case MotionEvent.ACTION_UP:
 				Log.d("TappingCaseActivity", "outerTapImage:ACTION_UP");
 				tapImage.setImageResource(R.drawable.face_normal);
 				nextTask();
 				break;
+
 			case MotionEvent.ACTION_CANCEL:
 				Log.d("TappingCaseActivity", "outerTapImage:ACTION_CANCEL");
 				tapImage.setImageResource(R.drawable.face_normal);
 				break;
+
 			case MotionEvent.ACTION_SCROLL:
 				Log.d("TappingCaseActivity", "outerTapImage:ACTION_SCROLL");
 				break;
@@ -157,4 +184,38 @@ public class TappingCaseActivity extends Activity {
 			return true;
 		}
 	};
+
+	private Runnable timeCounter = new Runnable() {
+
+		@Override
+		public void run() {
+			startTime++;
+			timeCounterText.setText(startTime + " seconds");
+			handler.postDelayed(this, 1000);
+
+			if (startTime == ALL_TASK_TIMEOUT) {
+				runOnUiThread(new Runnable() {
+
+					@Override
+					public void run() {
+						AlertDialog.Builder builder = new AlertDialog.Builder(
+								TappingCaseActivity.this);
+						builder.setTitle("你已經完成了測試囉!!");
+						builder.setPositiveButton("好", new OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								TappingCaseActivity.this.finish();
+							}
+						});
+
+						AlertDialog dialog = builder.create();
+						dialog.show();
+
+					}
+				});
+			}
+		}
+	};
+
 }
