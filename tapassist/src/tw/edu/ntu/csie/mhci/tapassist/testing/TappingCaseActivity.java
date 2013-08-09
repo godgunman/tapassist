@@ -32,7 +32,7 @@ public class TappingCaseActivity extends Activity {
 
 		outerTapImage = (RelativeLayout) findViewById(R.id.outerTapImage);
 		tapImage = (ImageView) findViewById(R.id.tapImage);
-		taskNumText = (TextView) findViewById(R.id.taskNum);
+		taskNumText = (TextView) findViewById(R.id.taskNumText);
 
 		outerTapImage.setOnTouchListener(outerTapImageTouchListener);
 		tapImage.setOnTouchListener(tapImageTouchListener);
@@ -45,7 +45,7 @@ public class TappingCaseActivity extends Activity {
 			@Override
 			protected void onPreExecute() {
 				try {
-					Thread.sleep(500);
+					Thread.sleep(700);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
