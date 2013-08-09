@@ -8,7 +8,6 @@ import tw.edu.ntu.csie.mhci.tapassist.utils.Media;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,6 +23,7 @@ import android.widget.Toast;
 public class TappingCaseActivity extends Activity {
 
 	private static final long ALL_TASK_TIMEOUT = 300 * 1000;
+	private static final long TOUCH_SLOP = 8;
 
 	private RelativeLayout outerTapImage;
 	private ImageView tapImage;
@@ -34,8 +34,12 @@ public class TappingCaseActivity extends Activity {
 
 	private int taskNum = 1;
 	private long startTime = 1;
-	
+
 	private boolean isTouchAvailable;
+	private boolean isTouchMove;
+
+	private float firstTouchX;
+	private float firstTouchY;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +71,8 @@ public class TappingCaseActivity extends Activity {
 				}
 				tapImage.setVisibility(View.GONE);
 				isTouchAvailable = false;
+				isTouchMove = false;
+				firstTouchX = firstTouchY = -1;
 			}
 
 			@Override
@@ -82,7 +88,7 @@ public class TappingCaseActivity extends Activity {
 
 				taskNum++;
 				taskNumText.setText("Task " + taskNum);
-				
+
 				isTouchAvailable = true;
 			}
 
@@ -119,23 +125,47 @@ public class TappingCaseActivity extends Activity {
 				Media.play(TappingCaseActivity.this, "hit.mp3");
 				Log.d("TappingCaseActivity", "tapImage:ACTION_DOWN");
 				tapImage.setImageResource(R.drawable.face_hit);
+
+				firstTouchX = x;
+				firstTouchY = y;
+
 				break;
+
 			case MotionEvent.ACTION_MOVE:
+
+				// ignore this case
+				if (Math.abs(x - firstTouchX) < TOUCH_SLOP
+						&& Math.abs(y - firstTouchY) < TOUCH_SLOP) {
+					return true;
+				}
+
+				// first move
+				if (isTouchMove == false) {
+					Media.play(TappingCaseActivity.this, "slip.mp3");
+				}
+
+				isTouchMove = true;
 				Log.d("TappingCaseActivity", "tapImage:ACTION_MOVE");
+				tapImage.setImageResource(R.drawable.face_normal);
 				tapImage.setX(x - tapImage.getWidth() / 2);
 				tapImage.setY(y - tapImage.getHeight() / 2
 						- Layout.getStatusBar(TappingCaseActivity.this));
 				break;
+
 			case MotionEvent.ACTION_UP:
 				Log.d("TappingCaseActivity", "tapImage:ACTION_UP");
-				Media.play(TappingCaseActivity.this, "right.mp3");
+				if (isTouchMove == false) {
+					Media.play(TappingCaseActivity.this, "right.mp3");
+				}
 				tapImage.setImageResource(R.drawable.face_normal);
 				nextTask();
 				break;
+
 			case MotionEvent.ACTION_CANCEL:
 				Log.d("TappingCaseActivity", "tapImage:ACTION_CANCEL");
 				tapImage.setImageResource(R.drawable.face_normal);
 				break;
+
 			case MotionEvent.ACTION_SCROLL:
 				Log.d("TappingCaseActivity", "tapImage:ACTION_SCROLL");
 				break;
@@ -201,13 +231,14 @@ public class TappingCaseActivity extends Activity {
 						AlertDialog.Builder builder = new AlertDialog.Builder(
 								TappingCaseActivity.this);
 						builder.setTitle("你已經完成了測試囉!!");
-						builder.setPositiveButton("好", new OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								TappingCaseActivity.this.finish();
-							}
-						});
+						builder.setPositiveButton("好",
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+										TappingCaseActivity.this.finish();
+									}
+								});
 
 						AlertDialog dialog = builder.create();
 						dialog.show();
