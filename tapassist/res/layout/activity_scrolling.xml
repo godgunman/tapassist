@@ -4,37 +4,47 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <LinearLayout
-        android:id="@+id/ll"
+    <RelativeLayout
+        android:id="@+id/inforRelativeLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/darker_gray"
-        android:orientation="horizontal" >
+        android:background="@android:color/darker_gray" >
 
         <TextView
-            android:id="@+id/taskNum"
+            android:id="@+id/taskNumText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
             android:text="Task:" />
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/timeCounterText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="1 second" />
+    </RelativeLayout>
 
-    <ListView
-        android:id="@+id/listView"
-        android:layout_width="match_parent"
+    <RelativeLayout
+        android:id="@+id/listViewContainer"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/ll"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true" >
-    </ListView>
+        android:layout_below="@+id/inforRelativeLayout" >
 
-    <ImageView
-        android:id="@+id/redBoxImage"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:adjustViewBounds="true"
-        android:scaleType="fitXY"
-        android:src="@drawable/redbox" />
+        <ListView
+            android:id="@+id/listView"
+            android:layout_width="400px"
+            android:layout_height="wrap_content" >
+        </ListView>
+
+        <ImageView
+            android:id="@+id/redBoxImage"
+            android:layout_width="400px"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"
+            android:src="@drawable/redbox" />
+    </RelativeLayout>
 
 </RelativeLayout>
