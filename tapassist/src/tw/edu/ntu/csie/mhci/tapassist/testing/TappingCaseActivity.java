@@ -4,6 +4,7 @@ import java.util.Random;
 
 import tw.edu.ntu.csie.mhci.tapassist.R;
 import tw.edu.ntu.csie.mhci.tapassist.utils.Layout;
+import tw.edu.ntu.csie.mhci.tapassist.utils.LogHelper;
 import tw.edu.ntu.csie.mhci.tapassist.utils.Media;
 import tw.edu.ntu.csie.mhci.tapassist.utils.PreferenceHelper;
 import android.app.Activity;
@@ -123,6 +124,8 @@ public class TappingCaseActivity extends Activity {
 						Toast.LENGTH_SHORT).show();
 				return false;
 			}
+
+			LogHelper.wirteLogTouchEvent(TappingCaseActivity.this, event);
 
 			int action = event.getAction();
 

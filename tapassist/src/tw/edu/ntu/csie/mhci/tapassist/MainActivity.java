@@ -40,4 +40,10 @@ public class MainActivity extends Activity {
 		intent.setClass(this, Settings.class);
 		startActivity(intent);
 	}
+
+	public void goToLog(View view) {
+		Intent intent = new Intent();
+		intent.setClass(this, LogActivity.class);
+		startActivity(intent);
+	}
 }

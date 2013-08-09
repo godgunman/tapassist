@@ -29,4 +29,11 @@
         android:onClick="goToSettings"
         android:text="Settings" />
 
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="goToLog"
+        android:text="See Logs" />
+
 </LinearLayout>
