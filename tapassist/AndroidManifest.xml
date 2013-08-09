@@ -33,6 +33,7 @@
         </activity>
         <activity android:name="LogActivity" >
         </activity>
+        <activity android:name="StartTestingActivity"></activity>
     </application>
 
 </manifest>

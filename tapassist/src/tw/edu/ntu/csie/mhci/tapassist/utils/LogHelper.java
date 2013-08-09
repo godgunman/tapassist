@@ -20,7 +20,6 @@ public class LogHelper {
 					i, getTouchAction(event), event.getX(i), event.getY(i));
 			wirte(context, data);
 		}
-
 	}
 
 	public static void wirteLogTask(Context context, MotionEvent event,
