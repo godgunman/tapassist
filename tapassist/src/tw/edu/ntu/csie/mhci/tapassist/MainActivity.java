@@ -34,4 +34,10 @@ public class MainActivity extends Activity {
 		intent.setClass(this, ScrollingCaseActivity.class);
 		startActivity(intent);
 	}
+
+	public void goToSettings(View view) {
+		Intent intent = new Intent();
+		intent.setClass(this, Settings.class);
+		startActivity(intent);
+	}
 }

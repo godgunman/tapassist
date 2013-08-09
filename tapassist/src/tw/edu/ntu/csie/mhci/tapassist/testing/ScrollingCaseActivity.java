@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Random;
 
 import tw.edu.ntu.csie.mhci.tapassist.R;
+import tw.edu.ntu.csie.mhci.tapassist.utils.Media;
+import tw.edu.ntu.csie.mhci.tapassist.utils.PreferenceHelper;
 import tw.edu.ntu.csie.mhci.tapassist.utils.Sleep;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -29,8 +31,8 @@ import android.widget.Toast;
 
 public class ScrollingCaseActivity extends Activity {
 
-	private final static long ONE_TASK_TIMEOUT = 60 * 1000;
-	private final static long ALL_TASK_TIMEOUT = 300 * 1000;
+	private static long SINGLE_TASK_TIMEOUT = 60 * 1000;
+	private static long ALL_TASK_TIMEOUT = 300 * 1000;
 	private final static long CORRECT_TIME_BOUND = 500;
 
 	private final static int LISTVIEW_SIZE = 30;
@@ -73,6 +75,16 @@ public class ScrollingCaseActivity extends Activity {
 				targetListItem = view.getChildAt(targetItem - firstVisibleItem);
 			}
 		});
+
+		// TODO(ggm) lazy to check
+		try {
+			SINGLE_TASK_TIMEOUT = Long.valueOf(PreferenceHelper.getString(this,
+					"scrolling_single_task_timeout")) * 1000;
+			ALL_TASK_TIMEOUT = Long.valueOf(PreferenceHelper.getString(this,
+					"scrolling_all_task_timeout"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		createListView();
 		handler.postDelayed(timeCounter, 1000);
@@ -171,7 +183,7 @@ public class ScrollingCaseActivity extends Activity {
 			long lastTimeInBox = Long.MAX_VALUE;
 			while (true) {
 
-				if (taskStartTime + ONE_TASK_TIMEOUT < new Date().getTime()) {
+				if (taskStartTime + SINGLE_TASK_TIMEOUT < new Date().getTime()) {
 					runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
@@ -200,6 +212,7 @@ public class ScrollingCaseActivity extends Activity {
 						public void run() {
 							Toast.makeText(ScrollingCaseActivity.this,
 									"correct", Toast.LENGTH_SHORT).show();
+							Media.play(ScrollingCaseActivity.this, "right.mp3");
 							nextRound(500);
 						}
 					});

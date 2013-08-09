@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="Scrolling Test" >
+        <EditTextPreference
+            android:defaultValue="8"
+            android:key="scrolling_touch_slop"
+            android:summary="pixels"
+            android:title="Touch Slop" />
+        <EditTextPreference
+            android:defaultValue="60"
+            android:key="scrolling_single_task_timeout"
+            android:summary="seconds"
+            android:title="Single Task Timeout" />
+        <EditTextPreference
+            android:defaultValue="300"
+            android:key="scrolling_all_task_timeout"
+            android:summary="seconds"
+            android:title="All Task Timeout" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Tapping Test" >
+        <EditTextPreference
+            android:defaultValue="8"
+            android:key="tapping_touch_slop"
+            android:summary="pixels"
+            android:title="Touch Slop" />
+        <EditTextPreference
+            android:defaultValue="300"
+            android:key="tapping_all_task_timeout"
+            android:summary="seconds"
+            android:title="All Task Timeout" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

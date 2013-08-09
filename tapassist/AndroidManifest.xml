@@ -29,6 +29,8 @@
         </activity>
         <activity android:name=".testing.TappingCaseActivity" >
         </activity>
+        <activity android:name="Settings" >
+        </activity>
     </application>
 
 </manifest>

@@ -5,6 +5,7 @@ import java.util.Random;
 import tw.edu.ntu.csie.mhci.tapassist.R;
 import tw.edu.ntu.csie.mhci.tapassist.utils.Layout;
 import tw.edu.ntu.csie.mhci.tapassist.utils.Media;
+import tw.edu.ntu.csie.mhci.tapassist.utils.PreferenceHelper;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -22,8 +23,8 @@ import android.widget.Toast;
 
 public class TappingCaseActivity extends Activity {
 
-	private static final long ALL_TASK_TIMEOUT = 300 * 1000;
-	private static final long TOUCH_SLOP = 8;
+	private static long ALL_TASK_TIMEOUT = 300 * 1000;
+	private static long TOUCH_SLOP = 8;
 
 	private RelativeLayout outerTapImage;
 	private ImageView tapImage;
@@ -32,7 +33,7 @@ public class TappingCaseActivity extends Activity {
 
 	private Handler handler = new Handler();
 
-	private int taskNum = 1;
+	private int taskNum = 0;
 	private long startTime = 1;
 
 	private boolean isTouchAvailable;
@@ -53,6 +54,15 @@ public class TappingCaseActivity extends Activity {
 
 		outerTapImage.setOnTouchListener(outerTapImageTouchListener);
 		tapImage.setOnTouchListener(tapImageTouchListener);
+
+		try {
+			ALL_TASK_TIMEOUT = Long.valueOf(PreferenceHelper.getString(this,
+					"tapping_all_task_timeout"));
+			TOUCH_SLOP = Long.valueOf(PreferenceHelper.getString(this,
+					"tapping_touch_slop"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		handler.postDelayed(timeCounter, 1000);
 		nextTask();
@@ -86,8 +96,7 @@ public class TappingCaseActivity extends Activity {
 				tapImage.setY(y);
 				tapImage.setVisibility(View.VISIBLE);
 
-				taskNum++;
-				taskNumText.setText("Task " + taskNum);
+				taskNumText.setText("Task " + taskNum++);
 
 				isTouchAvailable = true;
 			}

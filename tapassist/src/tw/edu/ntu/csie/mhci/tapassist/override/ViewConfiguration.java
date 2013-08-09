@@ -23,8 +23,6 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Point;
-import android.os.RemoteException;
-import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.SparseArray;
 import android.view.Display;
