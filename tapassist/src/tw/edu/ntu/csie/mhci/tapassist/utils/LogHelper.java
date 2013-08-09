@@ -16,8 +16,8 @@ public class LogHelper {
 	public static void wirteLogTouchEvent(Context context, MotionEvent event) {
 		int count = event.getPointerCount();
 		for (int i = 0; i < count; i++) {
-			String data = String.format("%ld %d %s %f %f", event.getEventTime(), i,
-					getTouchAction(event), event.getX(i), event.getY(i));
+			String data = String.format("%d %d %s %f %f", event.getEventTime(),
+					i, getTouchAction(event), event.getX(i), event.getY(i));
 			wirte(context, data);
 		}
 
@@ -25,7 +25,7 @@ public class LogHelper {
 
 	public static void wirteLogTask(Context context, MotionEvent event,
 			String action, int task) {
-		String data = String.format("%ld %d %s %f %f", event.getEventTime(), -1,
+		String data = String.format("%d %d %s %f %f", event.getEventTime(), -1,
 				action, event.getRawX(), event.getRawY());
 		wirte(context, data);
 	}
@@ -78,6 +78,6 @@ public class LogHelper {
 		case MotionEvent.ACTION_UP:
 			return "ACTION_UP";
 		}
-		return null;
+		return "null, id=" + event.getAction();
 	}
 }
