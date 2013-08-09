@@ -12,14 +12,21 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TappingTest"
-        android:onClick="goToTappingTest" />
+        android:onClick="goToTappingTest"
+        android:text="TappingTest" />
 
     <Button
         android:id="@+id/button2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="ScrollingTest"
-        android:onClick="goToScrollingTest" />
+        android:onClick="goToScrollingTest"
+        android:text="ScrollingTest" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="goToSettings"
+        android:text="Settings" />
 
 </LinearLayout>

@@ -40,7 +40,7 @@
         <ImageView
             android:id="@+id/redBoxImage"
             android:layout_width="400px"
-            android:layout_height="wrap_content"
+            android:layout_height="100px"
             android:layout_centerVertical="true"
             android:adjustViewBounds="true"
             android:scaleType="fitXY"

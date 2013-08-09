@@ -28,8 +28,8 @@
 
     <ImageView
         android:id="@+id/tapImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="66px"
+        android:layout_height="66px"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_marginLeft="59dp"

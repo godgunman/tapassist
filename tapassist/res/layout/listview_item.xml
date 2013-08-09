@@ -6,15 +6,15 @@
 
     <FrameLayout
         android:layout_width="wrap_content"
-        android:layout_height="100px"
+        android:layout_height="80px"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp" >
 
         <ImageView
             android:id="@+id/listItemImage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="66px"
+            android:layout_height="66px"
             android:layout_gravity="center_vertical|center_horizontal"
             android:src="@drawable/face_normal" />
 
