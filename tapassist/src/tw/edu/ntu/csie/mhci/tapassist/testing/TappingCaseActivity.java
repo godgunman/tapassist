@@ -80,6 +80,7 @@ public class TappingCaseActivity extends Activity {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
+				tapImage.setImageResource(R.drawable.face_normal);
 				tapImage.setVisibility(View.GONE);
 				isTouchAvailable = false;
 				isTouchMove = false;
@@ -115,6 +116,15 @@ public class TappingCaseActivity extends Activity {
 		task.execute();
 	}
 
+	private void fail() {
+//		LogHelper.wirteLogTask(this, event, action, task);
+	}
+	
+	private void success() {
+		Media.play(TappingCaseActivity.this, "right.mp3");
+//		LogHelper.wirteLogTask(this, event, action, task);
+	}
+	
 	private OnTouchListener tapImageTouchListener = new OnTouchListener() {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
@@ -167,7 +177,9 @@ public class TappingCaseActivity extends Activity {
 			case MotionEvent.ACTION_UP:
 				Log.d("TappingCaseActivity", "tapImage:ACTION_UP");
 				if (isTouchMove == false) {
-					Media.play(TappingCaseActivity.this, "right.mp3");
+					success();
+				} else {
+					fail();
 				}
 				tapImage.setImageResource(R.drawable.face_normal);
 				nextTask();
@@ -195,6 +207,8 @@ public class TappingCaseActivity extends Activity {
 				return false;
 			}
 
+			LogHelper.wirteLogTouchEvent(TappingCaseActivity.this, event);
+			
 			int action = event.getAction();
 			switch (action) {
 			case MotionEvent.ACTION_DOWN:
@@ -211,6 +225,7 @@ public class TappingCaseActivity extends Activity {
 			case MotionEvent.ACTION_UP:
 				Log.d("TappingCaseActivity", "outerTapImage:ACTION_UP");
 				tapImage.setImageResource(R.drawable.face_normal);
+				fail();
 				nextTask();
 				break;
 
