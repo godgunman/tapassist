@@ -29,9 +29,9 @@ import android.widget.Toast;
 
 public class ScrollingCaseActivity extends Activity {
 
-	final static long ONE_TASK_TIMEOUT = 60 * 1000;
-	final static long ALL_TASK_TIMEOUT = 300 * 1000;
-	final static long CORRECT_TIME_BOUND = 500;
+	private final static long ONE_TASK_TIMEOUT = 60 * 1000;
+	private final static long ALL_TASK_TIMEOUT = 300 * 1000;
+	private final static long CORRECT_TIME_BOUND = 500;
 
 	private final static int LISTVIEW_SIZE = 30;
 	private final static int[] LISTVIEW_OFFSET = { 0, 400, 800 };
