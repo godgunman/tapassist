@@ -110,7 +110,7 @@ public class TappingCaseActivity extends Activity {
 	}
 	
 	private void success() {
-		Media.play(TappingCaseActivity.this, "right.mp3");
+		Media.play(TappingCaseActivity.this, R.raw.right);
 //		LogHelper.wirteLogTask(this, event, action, task);
 	}
 	
@@ -148,7 +148,7 @@ public class TappingCaseActivity extends Activity {
 
 			switch (action) {
 			case MotionEvent.ACTION_DOWN:
-				Media.play(TappingCaseActivity.this, "hit.mp3");
+				Media.play(TappingCaseActivity.this, R.raw.hit);
 				Log.d("TappingCaseActivity", "tapImage:ACTION_DOWN");
 				tapImage.setImageResource(R.drawable.face_hit);
 
@@ -167,7 +167,7 @@ public class TappingCaseActivity extends Activity {
 
 				// first move
 				if (isTouchMove == false) {
-					Media.play(TappingCaseActivity.this, "slip.mp3");
+					Media.play(TappingCaseActivity.this, R.raw.slip);
 				}
 
 				isTouchMove = true;
@@ -216,7 +216,7 @@ public class TappingCaseActivity extends Activity {
 			int action = event.getAction();
 			switch (action) {
 			case MotionEvent.ACTION_DOWN:
-				Media.play(TappingCaseActivity.this, "miss.mp3");
+				Media.play(TappingCaseActivity.this, R.raw.miss);
 				Log.d("TappingCaseActivity", "outerTapImage:ACTION_DOWN");
 				tapImage.setImageResource(R.drawable.face_bad);
 				break;

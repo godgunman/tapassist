@@ -205,7 +205,7 @@ public class ScrollingCaseActivity extends Activity {
 						public void run() {
 							Toast.makeText(ScrollingCaseActivity.this,
 									"correct", Toast.LENGTH_SHORT).show();
-							Media.play(ScrollingCaseActivity.this, "right.mp3");
+							Media.play(ScrollingCaseActivity.this, R.raw.right);
 							nextRound(500);
 						}
 					});
