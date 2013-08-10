@@ -66,7 +66,7 @@ public class TappingCaseActivity extends Activity {
 		}
 
 		handler.postDelayed(timeCounter, 1000);
-		nextTask();
+		createTargetImage();
 	}
 
 	private void nextTask() {
@@ -89,18 +89,7 @@ public class TappingCaseActivity extends Activity {
 
 			@Override
 			protected void onPostExecute(Void result) {
-				Random r = new Random();
-				float x = 50 + r.nextFloat() * (outerTapImage.getWidth() - 200);
-				float y = 50 + r.nextFloat()
-						* (outerTapImage.getHeight() - 200);
-
-				tapImage.setX(x);
-				tapImage.setY(y);
-				tapImage.setVisibility(View.VISIBLE);
-
-				taskNumText.setText("Task " + taskNum++);
-
-				isTouchAvailable = true;
+				createTargetImage();
 			}
 
 			@Override
@@ -125,6 +114,21 @@ public class TappingCaseActivity extends Activity {
 //		LogHelper.wirteLogTask(this, event, action, task);
 	}
 	
+	private void createTargetImage() {
+		Random r = new Random();
+		float x = 50 + r.nextFloat() * (outerTapImage.getWidth() - 200);
+		float y = 50 + r.nextFloat()
+				* (outerTapImage.getHeight() - 200);
+
+		tapImage.setX(x);
+		tapImage.setY(y);
+		tapImage.setVisibility(View.VISIBLE);
+
+		taskNumText.setText("Task " + taskNum++);
+
+		isTouchAvailable = true;
+	}
+
 	private OnTouchListener tapImageTouchListener = new OnTouchListener() {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {

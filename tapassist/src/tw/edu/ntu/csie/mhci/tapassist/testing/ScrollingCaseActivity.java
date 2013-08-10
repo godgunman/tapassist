@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Random;
 
 import tw.edu.ntu.csie.mhci.tapassist.R;
+import tw.edu.ntu.csie.mhci.tapassist.utils.LogHelper;
 import tw.edu.ntu.csie.mhci.tapassist.utils.Media;
 import tw.edu.ntu.csie.mhci.tapassist.utils.PreferenceHelper;
 import tw.edu.ntu.csie.mhci.tapassist.utils.Sleep;
@@ -19,7 +20,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.ImageView;
@@ -63,19 +66,9 @@ public class ScrollingCaseActivity extends Activity {
 		listViewContainerRelativeLayout = (RelativeLayout) findViewById(R.id.listViewContainer);
 
 		listView = (ListView) findViewById(R.id.listView);
-		listView.setOnScrollListener(new OnScrollListener() {
-
-			@Override
-			public void onScrollStateChanged(AbsListView view, int scrollState) {
-			}
-
-			@Override
-			public void onScroll(AbsListView view, int firstVisibleItem,
-					int visibleItemCount, int totalItemCount) {
-				targetListItem = view.getChildAt(targetItem - firstVisibleItem);
-			}
-		});
-
+		listView.setOnScrollListener(listViewOnScrollListener);
+		listView.setOnTouchListener(listViewOnTouchListener);
+		
 		// TODO(ggm) lazy to check
 		try {
 			SINGLE_TASK_TIMEOUT = Long.valueOf(PreferenceHelper.getString(this,
@@ -252,6 +245,25 @@ public class ScrollingCaseActivity extends Activity {
 					}
 				});
 			}
+		}
+	};
+	
+	private OnTouchListener listViewOnTouchListener = new OnTouchListener() {
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			LogHelper.wirteLogTouchEvent(ScrollingCaseActivity.this, event);
+			return false;
+		}
+	};
+	
+	private OnScrollListener listViewOnScrollListener = new OnScrollListener() {
+		@Override
+		public void onScrollStateChanged(AbsListView view, int scrollState) {
+		}
+		@Override
+		public void onScroll(AbsListView view, int firstVisibleItem,
+				int visibleItemCount, int totalItemCount) {
+			targetListItem = view.getChildAt(targetItem - firstVisibleItem);
 		}
 	};
 }

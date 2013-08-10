@@ -79,7 +79,7 @@ public class MainActivity extends ListActivity {
 
 	public void goToLog() {
 		Intent intent = new Intent();
-		intent.setClass(this, LogActivity.class);
+		intent.setClass(this, LogListActivity.class);
 		startActivity(intent);
 	}
 }

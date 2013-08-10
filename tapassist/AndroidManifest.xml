@@ -31,9 +31,10 @@
         </activity>
         <activity android:name="Settings" >
         </activity>
-        <activity android:name="LogActivity" >
+        <activity android:name="LogListActivity" >
         </activity>
         <activity android:name="StartTestingActivity"></activity>
+        <activity android:name="LogDetailActivity"></activity>
     </application>
 
 </manifest>
