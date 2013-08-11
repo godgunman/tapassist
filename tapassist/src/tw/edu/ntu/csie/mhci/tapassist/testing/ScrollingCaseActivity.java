@@ -36,6 +36,8 @@ public class ScrollingCaseActivity extends Activity {
 
 	private static long SINGLE_TASK_TIMEOUT = 60 * 1000;
 	private static long ALL_TASK_TIMEOUT = 300 * 1000;
+	private static long TOUCH_SLOP = 100;
+
 	private final static long CORRECT_TIME_BOUND = 500;
 
 	private final static int LISTVIEW_SIZE = 30;
@@ -68,13 +70,15 @@ public class ScrollingCaseActivity extends Activity {
 		listView = (ListView) findViewById(R.id.listView);
 		listView.setOnScrollListener(listViewOnScrollListener);
 		listView.setOnTouchListener(listViewOnTouchListener);
-		
+
 		// TODO(ggm) lazy to check
 		try {
 			SINGLE_TASK_TIMEOUT = Long.valueOf(PreferenceHelper.getString(this,
 					"scrolling_single_task_timeout")) * 1000;
 			ALL_TASK_TIMEOUT = Long.valueOf(PreferenceHelper.getString(this,
 					"scrolling_all_task_timeout"));
+			TOUCH_SLOP = Long.valueOf(PreferenceHelper.getString(this,
+					"scrolling_touch_slop"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -109,6 +113,7 @@ public class ScrollingCaseActivity extends Activity {
 					e.printStackTrace();
 				}
 				listViewContainerRelativeLayout.setVisibility(View.GONE);
+				firstTouchX = firstTouchY = -1;
 			}
 
 			@Override
@@ -144,7 +149,7 @@ public class ScrollingCaseActivity extends Activity {
 				LISTVIEW_SIZE);
 
 		targetItem = 5 + random.nextInt(LISTVIEW_SIZE - 10);
-		int selectionItem = targetItem - random.nextInt(5);
+		int selectionItem = targetItem - (1 + random.nextInt(5 - 1));
 		for (int i = 0; i < LISTVIEW_SIZE; i++) {
 			Map<String, Integer> item = new HashMap<String, Integer>();
 			if (i == targetItem) {
@@ -247,19 +252,42 @@ public class ScrollingCaseActivity extends Activity {
 			}
 		}
 	};
-	
+	private float firstTouchX;
+	private float firstTouchY;
+
 	private OnTouchListener listViewOnTouchListener = new OnTouchListener() {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
 			LogHelper.wirteLogTouchEvent(ScrollingCaseActivity.this, event);
+
+			int action = event.getAction();
+
+			float x = event.getRawX();
+			float y = event.getRawY();
+
+			switch (action) {
+			case MotionEvent.ACTION_DOWN:
+				firstTouchX = x;
+				firstTouchY = y;
+				break;
+
+			case MotionEvent.ACTION_MOVE:
+				// ignore this case
+				if (Math.abs(x - firstTouchX) < TOUCH_SLOP
+						&& Math.abs(y - firstTouchY) < TOUCH_SLOP) {
+					return true;
+				}
+				break;
+			}
 			return false;
 		}
 	};
-	
+
 	private OnScrollListener listViewOnScrollListener = new OnScrollListener() {
 		@Override
 		public void onScrollStateChanged(AbsListView view, int scrollState) {
 		}
+
 		@Override
 		public void onScroll(AbsListView view, int firstVisibleItem,
 				int visibleItemCount, int totalItemCount) {
