@@ -258,7 +258,6 @@ public class ScrollingCaseActivity extends Activity {
 	private OnTouchListener listViewOnTouchListener = new OnTouchListener() {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
-			LogHelper.wirteLogTouchEvent(ScrollingCaseActivity.this, event);
 
 			int action = event.getAction();
 
@@ -269,22 +268,32 @@ public class ScrollingCaseActivity extends Activity {
 			case MotionEvent.ACTION_DOWN:
 				firstTouchX = x;
 				firstTouchY = y;
+				LogHelper.wirteLogTouchEvent(ScrollingCaseActivity.this, event,
+						"");
 				break;
 
 			case MotionEvent.ACTION_MOVE:
 				// ignore this case
 				if (Math.abs(x - firstTouchX) < TOUCH_SLOP
 						&& Math.abs(y - firstTouchY) < TOUCH_SLOP) {
+					LogHelper.wirteLogTouchEvent(ScrollingCaseActivity.this,
+							event, "in_slop");
 					return true;
 				}
+				LogHelper.wirteLogTouchEvent(ScrollingCaseActivity.this, event,
+						"over_slop");
 				break;
 			case MotionEvent.ACTION_UP:
 				if (Math.abs(x - firstTouchX) < TOUCH_SLOP
 						&& Math.abs(y - firstTouchY) < TOUCH_SLOP) {
 					Media.play(ScrollingCaseActivity.this, R.raw.miss);
 				}
-				
+				LogHelper.wirteLogTouchEvent(ScrollingCaseActivity.this, event,
+						"");
 				break;
+			default:
+				LogHelper.wirteLogTouchEvent(ScrollingCaseActivity.this, event,
+						"");
 			}
 			return false;
 		}

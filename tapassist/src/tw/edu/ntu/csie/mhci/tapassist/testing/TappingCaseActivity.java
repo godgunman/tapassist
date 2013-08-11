@@ -34,7 +34,7 @@ public class TappingCaseActivity extends Activity {
 
 	private Handler handler = new Handler();
 
-	private int taskNum = 0;
+	private int taskNum = -1;
 	private long startTime = 1;
 
 	private boolean isTouchAvailable;
@@ -42,6 +42,9 @@ public class TappingCaseActivity extends Activity {
 
 	private float firstTouchX;
 	private float firstTouchY;
+
+	private float firstOuterTouchX;
+	private float firstOuterTouchY;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -105,28 +108,20 @@ public class TappingCaseActivity extends Activity {
 		task.execute();
 	}
 
-	private void fail() {
-//		LogHelper.wirteLogTask(this, event, action, task);
-	}
-	
-	private void success() {
-		Media.play(TappingCaseActivity.this, R.raw.right);
-//		LogHelper.wirteLogTask(this, event, action, task);
-	}
-	
 	private void createTargetImage() {
+		taskNum++;
 		Random r = new Random();
-		float x = 50 + r.nextFloat() * (outerTapImage.getWidth() - 200);
-		float y = 50 + r.nextFloat()
-				* (outerTapImage.getHeight() - 200);
+		float targetX = 50 + r.nextFloat() * (outerTapImage.getWidth() - 200);
+		float targetY = 50 + r.nextFloat() * (outerTapImage.getHeight() - 200);
 
-		tapImage.setX(x);
-		tapImage.setY(y);
+		tapImage.setX(targetX);
+		tapImage.setY(targetY);
 		tapImage.setVisibility(View.VISIBLE);
 
-		taskNumText.setText("Task " + taskNum++);
+		taskNumText.setText("Task " + taskNum);
 
 		isTouchAvailable = true;
+		LogHelper.wirteLogTaskStart(this, "tap", taskNum, targetX, targetY);
 	}
 
 	private OnTouchListener tapImageTouchListener = new OnTouchListener() {
@@ -139,8 +134,6 @@ public class TappingCaseActivity extends Activity {
 				return false;
 			}
 
-			LogHelper.wirteLogTouchEvent(TappingCaseActivity.this, event);
-
 			int action = event.getAction();
 
 			float x = event.getRawX();
@@ -149,6 +142,8 @@ public class TappingCaseActivity extends Activity {
 			switch (action) {
 			case MotionEvent.ACTION_DOWN:
 				Media.play(TappingCaseActivity.this, R.raw.hit);
+				LogHelper.wirteLogTouchEvent(TappingCaseActivity.this, event,
+						"hit");
 				Log.d("TappingCaseActivity", "tapImage:ACTION_DOWN");
 				tapImage.setImageResource(R.drawable.face_hit);
 
@@ -162,8 +157,13 @@ public class TappingCaseActivity extends Activity {
 				// ignore this case
 				if (Math.abs(x - firstTouchX) < TOUCH_SLOP
 						&& Math.abs(y - firstTouchY) < TOUCH_SLOP) {
+					LogHelper.wirteLogTouchEvent(TappingCaseActivity.this,
+							event, "in_slop");
 					return true;
 				}
+
+				LogHelper.wirteLogTouchEvent(TappingCaseActivity.this, event,
+						"over_slop");
 
 				// first move
 				if (isTouchMove == false) {
@@ -181,9 +181,12 @@ public class TappingCaseActivity extends Activity {
 			case MotionEvent.ACTION_UP:
 				Log.d("TappingCaseActivity", "tapImage:ACTION_UP");
 				if (isTouchMove == false) {
-					success();
+					Media.play(TappingCaseActivity.this, R.raw.right);
+					LogHelper.wirteLogTouchEvent(TappingCaseActivity.this,
+							event, "success");
 				} else {
-					fail();
+					LogHelper.wirteLogTouchEvent(TappingCaseActivity.this,
+							event, "over_slop");
 				}
 				tapImage.setImageResource(R.drawable.face_normal);
 				nextTask();
@@ -191,11 +194,15 @@ public class TappingCaseActivity extends Activity {
 
 			case MotionEvent.ACTION_CANCEL:
 				Log.d("TappingCaseActivity", "tapImage:ACTION_CANCEL");
+				LogHelper.wirteLogTouchEvent(TappingCaseActivity.this, event,
+						"");
 				tapImage.setImageResource(R.drawable.face_normal);
 				break;
 
 			case MotionEvent.ACTION_SCROLL:
 				Log.d("TappingCaseActivity", "tapImage:ACTION_SCROLL");
+				LogHelper.wirteLogTouchEvent(TappingCaseActivity.this, event,
+						"");
 				break;
 			}
 
@@ -211,17 +218,38 @@ public class TappingCaseActivity extends Activity {
 				return false;
 			}
 
-			LogHelper.wirteLogTouchEvent(TappingCaseActivity.this, event);
-			
+			LogHelper.wirteLogTouchEvent(TappingCaseActivity.this, event,
+					"miss");
+
 			int action = event.getAction();
+
+			float x = event.getRawX();
+			float y = event.getRawY();
+
 			switch (action) {
 			case MotionEvent.ACTION_DOWN:
+
+				firstOuterTouchX = x;
+				firstOuterTouchY = y;
+
 				Media.play(TappingCaseActivity.this, R.raw.miss);
 				Log.d("TappingCaseActivity", "outerTapImage:ACTION_DOWN");
 				tapImage.setImageResource(R.drawable.face_bad);
 				break;
 
 			case MotionEvent.ACTION_MOVE:
+
+				// ignore this case
+				if (Math.abs(x - firstOuterTouchX) < TOUCH_SLOP
+						&& Math.abs(y - firstOuterTouchY) < TOUCH_SLOP) {
+					LogHelper.wirteLogTouchEvent(TappingCaseActivity.this,
+							event, "in_slop");
+					return true;
+				}
+
+				LogHelper.wirteLogTouchEvent(TappingCaseActivity.this, event,
+						"over_slop");
+
 				Log.d("TappingCaseActivity", "outerTapImage:ACTION_MOVE");
 				tapImage.setImageResource(R.drawable.face_bad);
 				break;
@@ -229,7 +257,6 @@ public class TappingCaseActivity extends Activity {
 			case MotionEvent.ACTION_UP:
 				Log.d("TappingCaseActivity", "outerTapImage:ACTION_UP");
 				tapImage.setImageResource(R.drawable.face_normal);
-				fail();
 				nextTask();
 				break;
 

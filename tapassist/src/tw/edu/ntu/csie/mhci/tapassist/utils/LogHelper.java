@@ -18,18 +18,27 @@ import android.view.MotionEvent;
 
 public class LogHelper {
 
-	public static void wirteLogTouchEvent(Context context, MotionEvent event) {
+	public static void wirteLogTouchEvent(Context context, MotionEvent event,
+			String metadata) {
 		JSONObject object = eventToJSONObject(event);
+		if (metadata != null) {
+			try {
+				object.put("metadata", metadata);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		wirte(context, object.toString());
 	}
 
-	public static void wirteLogTask(Context context, String taskCategory,
-			int taskNum, String result, float targetX, float targetY) {
+	public static void wirteLogTaskStart(Context context, String taskType,
+			int taskNum, float targetX, float targetY) {
 		JSONObject object = new JSONObject();
 		try {
 			object.put("time", System.currentTimeMillis());
-			object.put("taskCategory", taskCategory);
-			object.put("result", result);
+			object.put("taskType", taskType);
+			object.put("taskAction", "start");
 			object.put("taskNum", taskNum);
 			object.put("targetX", targetX);
 			object.put("targetY", targetY);
@@ -37,7 +46,24 @@ public class LogHelper {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		wirte(context, object.toString());
+	}
 
+	public static void wirteLogTaskEnd(Context context, String taskType,
+			int taskNum, JSONObject metadata) {
+		JSONObject object = new JSONObject();
+		try {
+			object.put("time", System.currentTimeMillis());
+			object.put("taskType", taskType);
+			object.put("taskAction", "end");
+			object.put("taskNum", taskNum);
+			if (metadata != null) {
+				object.put("data", metadata);
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		wirte(context, object.toString());
 	}
 
@@ -80,6 +106,7 @@ public class LogHelper {
 		JSONObject object = new JSONObject();
 		try {
 			object.put("action", MotionEvent.actionToString(event.getAction()));
+			object.put("time", System.currentTimeMillis());
 
 			JSONArray array = new JSONArray();
 			int pointerCount = event.getPointerCount();
