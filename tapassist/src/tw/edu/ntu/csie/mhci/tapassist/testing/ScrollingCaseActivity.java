@@ -278,6 +278,13 @@ public class ScrollingCaseActivity extends Activity {
 					return true;
 				}
 				break;
+			case MotionEvent.ACTION_UP:
+				if (Math.abs(x - firstTouchX) < TOUCH_SLOP
+						&& Math.abs(y - firstTouchY) < TOUCH_SLOP) {
+					Media.play(ScrollingCaseActivity.this, R.raw.miss);
+				}
+				
+				break;
 			}
 			return false;
 		}
