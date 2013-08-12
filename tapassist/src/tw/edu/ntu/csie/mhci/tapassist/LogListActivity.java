@@ -12,11 +12,17 @@ import android.widget.TextView;
 
 public class LogListActivity extends ListActivity {
 
+	private static final int DETAIL_LOG = 0;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
+		setListViewData();
+	}
+
+	private void setListViewData() {
 		File logDir = new File(getFilesDir(), "/logs/");
 		if (logDir.isDirectory()) {
 			String[] files = logDir.list();
@@ -35,6 +41,18 @@ public class LogListActivity extends ListActivity {
 		intent.putExtra("fileName", fileName);
 		intent.setClass(this, LogDetailActivity.class);
 
-		startActivity(intent);
+		startActivityForResult(intent, DETAIL_LOG);
 	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+
+		if (requestCode == DETAIL_LOG) {
+			if (resultCode == LogDetailActivity.DETELTE_LOG_FILE) {
+				setListViewData();
+			}
+		}
+	}
+
 }

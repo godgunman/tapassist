@@ -75,6 +75,8 @@ public class LogHelper {
 			FileOutputStream fo = new FileOutputStream(file, true);
 			data = data + "\n";
 			fo.write(data.getBytes());
+			fo.flush();
+			fo.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -140,7 +142,7 @@ public class LogHelper {
 		return null;
 	}
 
-	private static File getLogDir(Context context) {
+	public static File getLogDir(Context context) {
 		File logDir = new File(context.getFilesDir() + "/logs/");
 		if (logDir.exists() == false) {
 			logDir.mkdir();
