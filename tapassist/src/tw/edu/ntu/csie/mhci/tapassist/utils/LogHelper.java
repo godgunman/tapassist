@@ -33,15 +33,16 @@ public class LogHelper {
 	}
 
 	public static void wirteLogTaskStart(Context context, String taskType,
-			int taskNum, float targetX, float targetY) {
+			int taskNum, JSONObject metadata) {
 		JSONObject object = new JSONObject();
 		try {
 			object.put("time", System.currentTimeMillis());
 			object.put("taskType", taskType);
 			object.put("taskAction", "start");
 			object.put("taskNum", taskNum);
-			object.put("targetX", targetX);
-			object.put("targetY", targetY);
+			if (metadata != null) {
+				object.put("metadata", metadata);
+			}
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -58,7 +59,7 @@ public class LogHelper {
 			object.put("taskAction", "end");
 			object.put("taskNum", taskNum);
 			if (metadata != null) {
-				object.put("data", metadata);
+				object.put("metadata", metadata);
 			}
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block

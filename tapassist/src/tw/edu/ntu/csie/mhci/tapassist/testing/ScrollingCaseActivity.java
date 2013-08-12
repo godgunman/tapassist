@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import tw.edu.ntu.csie.mhci.tapassist.R;
 import tw.edu.ntu.csie.mhci.tapassist.utils.LogHelper;
 import tw.edu.ntu.csie.mhci.tapassist.utils.Media;
@@ -52,10 +55,11 @@ public class ScrollingCaseActivity extends Activity {
 
 	private Handler handler = new Handler();
 
-	private int taskNum = 1;
+	private int taskNum = -1;
 	private int targetItem;
 
 	private long startTime = 1;
+	private Thread checkCorrectThread;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -137,14 +141,16 @@ public class ScrollingCaseActivity extends Activity {
 
 	private void createListView() {
 
+		taskNum++;
 		Random random = new Random();
 
 		listViewContainerRelativeLayout.setVisibility(View.VISIBLE);
 		listViewContainerRelativeLayout
 				.setX(LISTVIEW_OFFSET[random.nextInt(3)]);
-		taskNumText.setText("Task : " + taskNum++);
+		taskNumText.setText("Task : " + taskNum);
 
-		new Thread(checkCorrect).start();
+		checkCorrectThread = new Thread(checkCorrect);
+		checkCorrectThread.start();
 		List<Map<String, Integer>> data = new ArrayList<Map<String, Integer>>(
 				LISTVIEW_SIZE);
 
@@ -169,8 +175,25 @@ public class ScrollingCaseActivity extends Activity {
 		listView.setAdapter(adapter);
 		listView.setSelection(selectionItem);
 
+		JSONObject metedata = new JSONObject();
+		try {
+			metedata.put("targetSelection", targetItem);
+			metedata.put("initialSelection", selectionItem);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		LogHelper.wirteLogTaskStart(this, "scrolling", taskNum, metedata);
+
 		Log.d("debug", "targetItem=" + targetItem + ", selectionItem="
 				+ selectionItem);
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		checkCorrectThread.interrupt();
+		Log.d("debug", "onDestory");
 	}
 
 	private Runnable checkCorrect = new Runnable() {
@@ -187,14 +210,29 @@ public class ScrollingCaseActivity extends Activity {
 						public void run() {
 							Toast.makeText(ScrollingCaseActivity.this,
 									"time out", Toast.LENGTH_SHORT).show();
-							Sleep.sleep(500);
-							createListView();
+
+							JSONObject metadata = new JSONObject();
+							try {
+								metadata.put("result", "fail");
+								metadata.put("reason", "timeout");
+							} catch (JSONException e) {
+								e.printStackTrace();
+							}
+
+							LogHelper.wirteLogTaskEnd(
+									ScrollingCaseActivity.this, "scroll", taskNum,
+									metadata);
+
+							nextRound(500);
 						}
 					});
 					return;
 				}
-
-				Sleep.sleep(100);
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					return;
+				}
 
 				if (targetListItem != null && checkIfInBox() == true) {
 					if (lastTimeInBox == Long.MAX_VALUE) {
@@ -211,6 +249,17 @@ public class ScrollingCaseActivity extends Activity {
 							Toast.makeText(ScrollingCaseActivity.this,
 									"correct", Toast.LENGTH_SHORT).show();
 							Media.play(ScrollingCaseActivity.this, R.raw.right);
+
+							JSONObject metadata = new JSONObject();
+							try {
+								metadata.put("result", "success");
+							} catch (JSONException e) {
+								e.printStackTrace();
+							}
+
+							LogHelper.wirteLogTaskEnd(
+									ScrollingCaseActivity.this, "scroll", taskNum,
+									metadata);
 							nextRound(500);
 						}
 					});
@@ -245,8 +294,12 @@ public class ScrollingCaseActivity extends Activity {
 						});
 
 						AlertDialog dialog = builder.create();
-						dialog.show();
-
+						// TODO(ggm)
+						try {
+							dialog.show();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 					}
 				});
 			}

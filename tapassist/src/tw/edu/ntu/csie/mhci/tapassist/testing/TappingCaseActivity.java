@@ -2,6 +2,9 @@ package tw.edu.ntu.csie.mhci.tapassist.testing;
 
 import java.util.Random;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import tw.edu.ntu.csie.mhci.tapassist.R;
 import tw.edu.ntu.csie.mhci.tapassist.utils.Layout;
 import tw.edu.ntu.csie.mhci.tapassist.utils.LogHelper;
@@ -121,7 +124,16 @@ public class TappingCaseActivity extends Activity {
 		taskNumText.setText("Task " + taskNum);
 
 		isTouchAvailable = true;
-		LogHelper.wirteLogTaskStart(this, "tap", taskNum, targetX, targetY);
+
+		JSONObject data = new JSONObject();
+		try {
+			data.put("targetX", targetX);
+			data.put("targetY", targetY);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		LogHelper.wirteLogTaskStart(this, "tap", taskNum, data);
 	}
 
 	private OnTouchListener tapImageTouchListener = new OnTouchListener() {
@@ -180,14 +192,29 @@ public class TappingCaseActivity extends Activity {
 
 			case MotionEvent.ACTION_UP:
 				Log.d("TappingCaseActivity", "tapImage:ACTION_UP");
+				JSONObject metadata = new JSONObject();
 				if (isTouchMove == false) {
 					Media.play(TappingCaseActivity.this, R.raw.right);
 					LogHelper.wirteLogTouchEvent(TappingCaseActivity.this,
 							event, "success");
+					try {
+						metadata.put("result", "success");
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
 				} else {
 					LogHelper.wirteLogTouchEvent(TappingCaseActivity.this,
 							event, "over_slop");
+					try {
+						metadata.put("result", "fail");
+						metadata.put("reason", "over_slop");
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
 				}
+
+				LogHelper.wirteLogTaskEnd(TappingCaseActivity.this, "tap",
+						taskNum, metadata);
 				tapImage.setImageResource(R.drawable.face_normal);
 				nextTask();
 				break;
@@ -257,6 +284,16 @@ public class TappingCaseActivity extends Activity {
 			case MotionEvent.ACTION_UP:
 				Log.d("TappingCaseActivity", "outerTapImage:ACTION_UP");
 				tapImage.setImageResource(R.drawable.face_normal);
+
+				JSONObject metadata = new JSONObject();
+				try {
+					metadata.put("result", "fail");
+					metadata.put("reason", "miss");
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				LogHelper.wirteLogTaskEnd(TappingCaseActivity.this, "tap",
+						taskNum, metadata);
 				nextTask();
 				break;
 
@@ -299,7 +336,13 @@ public class TappingCaseActivity extends Activity {
 								});
 
 						AlertDialog dialog = builder.create();
-						dialog.show();
+
+						// TODO(ggm)
+						try {
+							dialog.show();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 
 					}
 				});
