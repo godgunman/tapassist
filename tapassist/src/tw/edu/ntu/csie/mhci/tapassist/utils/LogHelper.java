@@ -6,12 +6,15 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.os.Environment;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -29,7 +32,7 @@ public class LogHelper {
 				e.printStackTrace();
 			}
 		}
-		wirte(context, object.toString());
+		write(context, object.toString());
 	}
 
 	public static void wirteLogTaskStart(Context context, String taskType,
@@ -47,7 +50,7 @@ public class LogHelper {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		wirte(context, object.toString());
+		write(context, object.toString());
 	}
 
 	public static void wirteLogTaskEnd(Context context, String taskType,
@@ -65,13 +68,14 @@ public class LogHelper {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		wirte(context, object.toString());
+		write(context, object.toString());
 	}
 
-	public static void wirte(Context context, String data) {
+	public static void write(Context context, String data) {
 
-		File file = new File(getLogDir(context),
-				PreferenceHelper.getStoreFile(context));
+		String fileName = PreferenceHelper.getStoreFile(context);
+		fileName = fileName.replaceAll("[: \\-]", "_");
+		File file = new File(getLogDir(context), fileName);
 		try {
 			FileOutputStream fo = new FileOutputStream(file, true);
 			data = data + "\n";
@@ -144,10 +148,25 @@ public class LogHelper {
 	}
 
 	public static File getLogDir(Context context) {
-		File logDir = new File(context.getFilesDir() + "/logs/");
-		if (logDir.exists() == false) {
-			logDir.mkdir();
+		File sdCard = Environment.getExternalStorageDirectory();
+		File dir = new File(sdCard + "/tapassist/logs");
+		if (dir.exists() == false) {
+			dir.mkdirs();
 		}
-		return logDir;
+		return dir;
+	}
+
+	public static void copy(File src, File dst) throws IOException {
+		InputStream in = new FileInputStream(src);
+		OutputStream out = new FileOutputStream(dst);
+
+		// Transfer bytes from in to out
+		byte[] buf = new byte[1024];
+		int len;
+		while ((len = in.read(buf)) > 0) {
+			out.write(buf, 0, len);
+		}
+		in.close();
+		out.close();
 	}
 }

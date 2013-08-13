@@ -114,8 +114,9 @@ public class TappingCaseActivity extends Activity {
 	private void createTargetImage() {
 		taskNum++;
 		Random r = new Random();
-		float targetX = 50 + r.nextFloat() * (outerTapImage.getWidth() - 200);
-		float targetY = 50 + r.nextFloat() * (outerTapImage.getHeight() - 200);
+		//TODO(ggm) issue http://stackoverflow.com/questions/4142090/how-do-you-to-retrieve-dimensions-of-a-view-getheight-and-getwidth-always-r/4406090#4406090
+		float targetX = 50 + Math.abs(r.nextFloat() * (outerTapImage.getWidth() - 200));
+		float targetY = 50 + Math.abs(r.nextFloat() * (outerTapImage.getHeight() - 200));
 
 		tapImage.setX(targetX);
 		tapImage.setY(targetY);
