@@ -26,6 +26,7 @@ public class LogHelper {
 		JSONObject object = eventToJSONObject(event);
 		if (metadata != null) {
 			try {
+				object.put("logType", "touchEvent");
 				object.put("metadata", metadata);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -39,6 +40,7 @@ public class LogHelper {
 			int taskNum, JSONObject metadata) {
 		JSONObject object = new JSONObject();
 		try {
+			object.put("logType", "task");
 			object.put("time", System.currentTimeMillis());
 			object.put("taskType", taskType);
 			object.put("taskAction", "start");
@@ -57,6 +59,7 @@ public class LogHelper {
 			int taskNum, JSONObject metadata) {
 		JSONObject object = new JSONObject();
 		try {
+			object.put("logType", "task");
 			object.put("time", System.currentTimeMillis());
 			object.put("taskType", taskType);
 			object.put("taskAction", "end");
