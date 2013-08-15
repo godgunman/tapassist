@@ -14,7 +14,6 @@ import tw.edu.ntu.csie.mhci.tapassist.R;
 import tw.edu.ntu.csie.mhci.tapassist.utils.LogHelper;
 import tw.edu.ntu.csie.mhci.tapassist.utils.Media;
 import tw.edu.ntu.csie.mhci.tapassist.utils.PreferenceHelper;
-import tw.edu.ntu.csie.mhci.tapassist.utils.Sleep;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -45,6 +44,8 @@ public class ScrollingCaseActivity extends Activity {
 
 	private final static int LISTVIEW_SIZE = 30;
 	private final static int[] LISTVIEW_OFFSET = { 0, 400, 800 };
+
+	private static boolean active = false;
 
 	private RelativeLayout listViewContainerRelativeLayout;
 	private ListView listView;
@@ -89,6 +90,18 @@ public class ScrollingCaseActivity extends Activity {
 
 		createListView();
 		handler.postDelayed(timeCounter, 1000);
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		active = true;
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		active = false;
 	}
 
 	private boolean checkIfInBox() {
@@ -220,8 +233,8 @@ public class ScrollingCaseActivity extends Activity {
 							}
 
 							LogHelper.wirteLogTaskEnd(
-									ScrollingCaseActivity.this, "scroll", taskNum,
-									metadata);
+									ScrollingCaseActivity.this, "scroll",
+									taskNum, metadata);
 
 							nextRound(500);
 						}
@@ -258,8 +271,8 @@ public class ScrollingCaseActivity extends Activity {
 							}
 
 							LogHelper.wirteLogTaskEnd(
-									ScrollingCaseActivity.this, "scroll", taskNum,
-									metadata);
+									ScrollingCaseActivity.this, "scroll",
+									taskNum, metadata);
 							nextRound(500);
 						}
 					});
@@ -274,8 +287,11 @@ public class ScrollingCaseActivity extends Activity {
 		@Override
 		public void run() {
 			startTime++;
+			if (active == false) {
+				return;
+			}
+
 			timeCounterText.setText(startTime + " seconds");
-			handler.postDelayed(this, 1000);
 
 			if (startTime == ALL_TASK_TIMEOUT) {
 				runOnUiThread(new Runnable() {
@@ -302,6 +318,8 @@ public class ScrollingCaseActivity extends Activity {
 						}
 					}
 				});
+			} else {
+				handler.postDelayed(this, 1000);
 			}
 		}
 	};

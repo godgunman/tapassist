@@ -10,7 +10,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -26,16 +26,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".testing.ScrollingCaseActivity" >
+        <activity
+            android:name=".testing.ScrollingCaseActivity"
+            android:launchMode="singleTask" >
         </activity>
-        <activity android:name=".testing.TappingCaseActivity" >
+        <activity
+            android:name=".testing.TappingCaseActivity"
+            android:launchMode="singleTask" >
         </activity>
         <activity android:name="Settings" >
         </activity>
         <activity android:name="LogListActivity" >
         </activity>
-        <activity android:name="StartTestingActivity"></activity>
-        <activity android:name="LogDetailActivity"></activity>
+        <activity android:name="StartTestingActivity" >
+        </activity>
+        <activity android:name="LogDetailActivity" >
+        </activity>
     </application>
 
 </manifest>
