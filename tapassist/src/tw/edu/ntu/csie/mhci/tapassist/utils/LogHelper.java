@@ -18,12 +18,29 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.View;
 
 public class LogHelper {
 
 	public static void wirteLogTouchEvent(Context context, MotionEvent event,
-			String metadata) {
-		JSONObject object = eventToJSONObject(event);
+			View view, String metadata, boolean isTappingImage) {
+		JSONObject object = eventToJSONObject(event, view);
+		try {
+			if (metadata != null) {
+				object.put("logType", "touchEvent");
+				object.put("metadata", metadata);
+			}
+			object.put("isTappingImage", isTappingImage);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		write(context, object.toString());
+	}
+
+	public static void wirteLogTouchEvent(Context context, MotionEvent event,
+			View view, String metadata) {
+		JSONObject object = eventToJSONObject(event, view);
 		if (metadata != null) {
 			try {
 				object.put("logType", "touchEvent");
@@ -112,7 +129,8 @@ public class LogHelper {
 		return null;
 	}
 
-	public static JSONObject eventToJSONObject(MotionEvent event) {
+	public static JSONObject eventToJSONObject(final MotionEvent event,
+			final View view) {
 		JSONObject object = new JSONObject();
 		try {
 			object.put("action", MotionEvent.actionToString(event.getAction()));
@@ -120,15 +138,21 @@ public class LogHelper {
 
 			JSONArray array = new JSONArray();
 			int pointerCount = event.getPointerCount();
+			final int location[] = { 0, 0 };
+			view.getLocationOnScreen(location);
+
 			for (int i = 0; i < pointerCount; i++) {
 				JSONObject pointer = new JSONObject();
 				pointer.put("id", event.getPointerId(i));
-				pointer.put("x", event.getX(i));
-				pointer.put("y", event.getY(i));
+				pointer.put("x", event.getX(i) + location[0]);
+				pointer.put("y", event.getY(i) + location[1]);
 				pointer.put("toolType", event.getToolType(i));
 				array.put(pointer);
 			}
 			object.put("pointers", array);
+			object.put("rawX", event.getRawX());
+			object.put("rawY", event.getRawY());
+
 			object.put("buttonState",
 					MotionEvent.buttonStateToString(event.getButtonState()));
 			object.put("metaState",

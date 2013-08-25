@@ -5,6 +5,8 @@ import java.util.Random;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.android.internal.net.VpnConfig;
+
 import tw.edu.ntu.csie.mhci.tapassist.R;
 import tw.edu.ntu.csie.mhci.tapassist.utils.Layout;
 import tw.edu.ntu.csie.mhci.tapassist.utils.LogHelper;
@@ -20,6 +22,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.view.ViewParent;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -72,7 +75,7 @@ public class TappingCaseActivity extends Activity {
 		}
 
 		handler.postDelayed(timeCounter, 1000);
-		createTargetImage();
+		nextTask();
 	}
 
 	private void nextTask() {
@@ -114,13 +117,22 @@ public class TappingCaseActivity extends Activity {
 	private void createTargetImage() {
 		taskNum++;
 		Random r = new Random();
-		//TODO(ggm) issue http://stackoverflow.com/questions/4142090/how-do-you-to-retrieve-dimensions-of-a-view-getheight-and-getwidth-always-r/4406090#4406090
-		float targetX = 50 + Math.abs(r.nextFloat() * (outerTapImage.getWidth() - 200));
-		float targetY = 50 + Math.abs(r.nextFloat() * (outerTapImage.getHeight() - 200));
+		// TODO(ggm) issue
+		// http://stackoverflow.com/questions/4142090/how-do-you-to-retrieve-dimensions-of-a-view-getheight-and-getwidth-always-r/4406090#4406090
+		float targetX = 50 + Math.abs(r.nextFloat()
+				* (outerTapImage.getWidth() - 200));
+		float targetY = 50 + Math.abs(r.nextFloat()
+				* (outerTapImage.getHeight() - 200));
 
 		tapImage.setX(targetX);
 		tapImage.setY(targetY);
 		tapImage.setVisibility(View.VISIBLE);
+
+		final int location[] = { 0, 0 };
+		tapImage.getLocationOnScreen(location);
+		
+		Log.d("debug", "targetX=" + targetX + ", " + location[0]);
+		Log.d("debug", "targetY=" + targetY + ", " + location[1]);
 
 		taskNumText.setText("Task " + taskNum);
 
@@ -128,8 +140,8 @@ public class TappingCaseActivity extends Activity {
 
 		JSONObject data = new JSONObject();
 		try {
-			data.put("targetX", targetX);
-			data.put("targetY", targetY);
+			data.put("targetX", location[0]);
+			data.put("targetY", location[1]);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -141,22 +153,27 @@ public class TappingCaseActivity extends Activity {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
 
-			if (event.getPointerCount() > 1) {
-				Toast.makeText(TappingCaseActivity.this, "multi touch",
-						Toast.LENGTH_SHORT).show();
-				return false;
-			}
+			// if (event.getPointerCount() > 1) {
+			// Toast.makeText(TappingCaseActivity.this, "multi touch",
+			// Toast.LENGTH_SHORT).show();
+			// return false;
+			// }
 
 			int action = event.getAction();
 
 			float x = event.getRawX();
 			float y = event.getRawY();
 
+			Log.d("debug", "[tapImage] RawX=" + x + " X=" + event.getX()
+					+ "diff=" + (x - event.getX()));
+			Log.d("debug", "[tapImage] RawY=" + y + " Y=" + event.getY()
+					+ "diff=" + (y - event.getY()));
+
 			switch (action) {
 			case MotionEvent.ACTION_DOWN:
 				Media.play(TappingCaseActivity.this, R.raw.hit);
 				LogHelper.wirteLogTouchEvent(TappingCaseActivity.this, event,
-						"hit");
+						v, "hit", true);
 				Log.d("TappingCaseActivity", "tapImage:ACTION_DOWN");
 				tapImage.setImageResource(R.drawable.face_hit);
 
@@ -171,12 +188,12 @@ public class TappingCaseActivity extends Activity {
 				if (Math.abs(x - firstTouchX) < TOUCH_SLOP
 						&& Math.abs(y - firstTouchY) < TOUCH_SLOP) {
 					LogHelper.wirteLogTouchEvent(TappingCaseActivity.this,
-							event, "in_slop");
+							event, v, "in_slop", true);
 					return true;
 				}
 
 				LogHelper.wirteLogTouchEvent(TappingCaseActivity.this, event,
-						"over_slop");
+						v, "over_slop", true);
 
 				// first move
 				if (isTouchMove == false) {
@@ -197,7 +214,7 @@ public class TappingCaseActivity extends Activity {
 				if (isTouchMove == false) {
 					Media.play(TappingCaseActivity.this, R.raw.right);
 					LogHelper.wirteLogTouchEvent(TappingCaseActivity.this,
-							event, "success");
+							event, v, "success", true);
 					try {
 						metadata.put("result", "success");
 					} catch (JSONException e) {
@@ -205,7 +222,7 @@ public class TappingCaseActivity extends Activity {
 					}
 				} else {
 					LogHelper.wirteLogTouchEvent(TappingCaseActivity.this,
-							event, "over_slop");
+							event, v, "over_slop", true);
 					try {
 						metadata.put("result", "fail");
 						metadata.put("reason", "over_slop");
@@ -223,14 +240,14 @@ public class TappingCaseActivity extends Activity {
 			case MotionEvent.ACTION_CANCEL:
 				Log.d("TappingCaseActivity", "tapImage:ACTION_CANCEL");
 				LogHelper.wirteLogTouchEvent(TappingCaseActivity.this, event,
-						"");
+						v, "", true);
 				tapImage.setImageResource(R.drawable.face_normal);
 				break;
 
 			case MotionEvent.ACTION_SCROLL:
 				Log.d("TappingCaseActivity", "tapImage:ACTION_SCROLL");
 				LogHelper.wirteLogTouchEvent(TappingCaseActivity.this, event,
-						"");
+						v, "", true);
 				break;
 			}
 
@@ -246,13 +263,18 @@ public class TappingCaseActivity extends Activity {
 				return false;
 			}
 
-			LogHelper.wirteLogTouchEvent(TappingCaseActivity.this, event,
-					"miss");
+			LogHelper.wirteLogTouchEvent(TappingCaseActivity.this, event, v,
+					"miss", false);
 
 			int action = event.getAction();
 
 			float x = event.getRawX();
 			float y = event.getRawY();
+
+			Log.d("debug", "[outerImage] RawX=" + x + " X=" + event.getX()
+					+ "diff=" + (x - event.getX()));
+			Log.d("debug", "[outerImage] RawY=" + y + " Y=" + event.getY()
+					+ "diff=" + (y - event.getY()));
 
 			switch (action) {
 			case MotionEvent.ACTION_DOWN:
@@ -271,12 +293,12 @@ public class TappingCaseActivity extends Activity {
 				if (Math.abs(x - firstOuterTouchX) < TOUCH_SLOP
 						&& Math.abs(y - firstOuterTouchY) < TOUCH_SLOP) {
 					LogHelper.wirteLogTouchEvent(TappingCaseActivity.this,
-							event, "in_slop");
+							event, v, "in_slop", false);
 					return true;
 				}
 
 				LogHelper.wirteLogTouchEvent(TappingCaseActivity.this, event,
-						"over_slop");
+						v, "over_slop", false);
 
 				Log.d("TappingCaseActivity", "outerTapImage:ACTION_MOVE");
 				tapImage.setImageResource(R.drawable.face_bad);

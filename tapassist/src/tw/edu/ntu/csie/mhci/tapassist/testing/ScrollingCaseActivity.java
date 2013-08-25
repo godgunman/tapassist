@@ -340,7 +340,7 @@ public class ScrollingCaseActivity extends Activity {
 				firstTouchX = x;
 				firstTouchY = y;
 				LogHelper.wirteLogTouchEvent(ScrollingCaseActivity.this, event,
-						"");
+						v, "");
 				break;
 
 			case MotionEvent.ACTION_MOVE:
@@ -348,11 +348,11 @@ public class ScrollingCaseActivity extends Activity {
 				if (Math.abs(x - firstTouchX) < TOUCH_SLOP
 						&& Math.abs(y - firstTouchY) < TOUCH_SLOP) {
 					LogHelper.wirteLogTouchEvent(ScrollingCaseActivity.this,
-							event, "in_slop");
+							event, v, "in_slop");
 					return true;
 				}
 				LogHelper.wirteLogTouchEvent(ScrollingCaseActivity.this, event,
-						"over_slop");
+						v, "over_slop");
 				break;
 			case MotionEvent.ACTION_UP:
 				if (Math.abs(x - firstTouchX) < TOUCH_SLOP
@@ -360,11 +360,11 @@ public class ScrollingCaseActivity extends Activity {
 					Media.play(ScrollingCaseActivity.this, R.raw.miss);
 				}
 				LogHelper.wirteLogTouchEvent(ScrollingCaseActivity.this, event,
-						"");
+						v, "");
 				break;
 			default:
 				LogHelper.wirteLogTouchEvent(ScrollingCaseActivity.this, event,
-						"");
+						v, "");
 			}
 			return false;
 		}
