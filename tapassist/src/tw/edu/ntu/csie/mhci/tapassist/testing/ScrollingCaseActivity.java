@@ -39,6 +39,8 @@ public class ScrollingCaseActivity extends Activity {
 	private static long SINGLE_TASK_TIMEOUT = 60 * 1000;
 	private static long ALL_TASK_TIMEOUT = 300 * 1000;
 	private static long TOUCH_SLOP = 100;
+	private static int LISTVIEW_RANDOM_POSITION = 3;
+	private static int TARGET_MIDDLE_OFFSET = 1;
 
 	private final static long CORRECT_TIME_BOUND = 500;
 
@@ -88,6 +90,11 @@ public class ScrollingCaseActivity extends Activity {
 					"scrolling_all_task_timeout"));
 			TOUCH_SLOP = Long.valueOf(PreferenceHelper.getString(this,
 					"scrolling_touch_slop"));
+			LISTVIEW_RANDOM_POSITION = Integer.valueOf(PreferenceHelper
+					.getString(this, "scrolling_listview_random_position"));
+			TARGET_MIDDLE_OFFSET = Integer.valueOf(PreferenceHelper.getString(
+					this, "scrolling_middle_offset"));
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -162,8 +169,8 @@ public class ScrollingCaseActivity extends Activity {
 		Random random = new Random();
 
 		listViewContainerRelativeLayout.setVisibility(View.VISIBLE);
-		listViewContainerRelativeLayout
-				.setX(LISTVIEW_OFFSET[random.nextInt(3)]);
+		listViewContainerRelativeLayout.setX(LISTVIEW_OFFSET[random
+				.nextInt(LISTVIEW_RANDOM_POSITION)]);
 		taskNumText.setText("Task : " + taskNum);
 
 		checkCorrectThread = new Thread(checkCorrect);
@@ -199,8 +206,15 @@ public class ScrollingCaseActivity extends Activity {
 		Random random = new Random();
 
 		int offset = random.nextInt(VISIBLE_ITEM_COUNT);
-		while (Math.abs(VISIBLE_ITEM_COUNT / 2 - offset) <= 2)
-			offset = random.nextInt(VISIBLE_ITEM_COUNT);
+
+		// error handle
+		if (TARGET_MIDDLE_OFFSET >= VISIBLE_ITEM_COUNT / 2) {
+			Toast.makeText(this, "wrong TARGET_MIDDLE_OFFSET set.",
+					Toast.LENGTH_SHORT).show();
+		} else {
+			while (Math.abs(VISIBLE_ITEM_COUNT / 2 - offset) <= TARGET_MIDDLE_OFFSET)
+				offset = random.nextInt(VISIBLE_ITEM_COUNT);
+		}
 
 		int selectionItem = targetItem - offset;
 		listView.setSelection(selectionItem);

@@ -8,6 +8,16 @@
             android:summary="pixels"
             android:title="Touch Slop" />
         <EditTextPreference
+            android:defaultValue="3"
+            android:key="scrolling_listview_random_position"
+            android:summary="1 ot 3"
+            android:title="ListView Ramdom Position" />
+        <EditTextPreference
+            android:defaultValue="1"
+            android:key="scrolling_middle_offset"
+            android:summary="middle offset"
+            android:title="Target Middle offset" />
+        <EditTextPreference
             android:defaultValue="60"
             android:key="scrolling_single_task_timeout"
             android:summary="seconds"
