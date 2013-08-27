@@ -45,6 +45,9 @@ public class ScrollingCaseActivity extends Activity {
 	private final static int LISTVIEW_SIZE = 30;
 	private final static int[] LISTVIEW_OFFSET = { 0, 400, 800 };
 
+	// for some hack ...
+	private static int VISIBLE_ITEM_COUNT = -1;
+
 	private static boolean active = false;
 	private static boolean isMoving = false;
 
@@ -168,8 +171,7 @@ public class ScrollingCaseActivity extends Activity {
 		List<Map<String, Integer>> data = new ArrayList<Map<String, Integer>>(
 				LISTVIEW_SIZE);
 
-		targetItem = 5 + random.nextInt(LISTVIEW_SIZE - 10);
-		int selectionItem = targetItem - (1 + random.nextInt(5 - 1));
+		targetItem = 10 + random.nextInt(LISTVIEW_SIZE - 20);
 		for (int i = 0; i < LISTVIEW_SIZE; i++) {
 			Map<String, Integer> item = new HashMap<String, Integer>();
 			if (i == targetItem) {
@@ -187,6 +189,20 @@ public class ScrollingCaseActivity extends Activity {
 				R.layout.listview_item, from, to);
 
 		listView.setAdapter(adapter);
+
+		if (VISIBLE_ITEM_COUNT != -1) {
+			setSelectionItem();
+		}
+	}
+
+	private void setSelectionItem() {
+		Random random = new Random();
+
+		int offset = random.nextInt(VISIBLE_ITEM_COUNT);
+		while (Math.abs(VISIBLE_ITEM_COUNT / 2 - offset) <= 2)
+			offset = random.nextInt(VISIBLE_ITEM_COUNT);
+
+		int selectionItem = targetItem - offset;
 		listView.setSelection(selectionItem);
 
 		JSONObject metedata = new JSONObject();
@@ -387,6 +403,12 @@ public class ScrollingCaseActivity extends Activity {
 		@Override
 		public void onScroll(AbsListView view, int firstVisibleItem,
 				int visibleItemCount, int totalItemCount) {
+			if (visibleItemCount > 0) {
+				if (VISIBLE_ITEM_COUNT == -1) {
+					VISIBLE_ITEM_COUNT = visibleItemCount;
+					setSelectionItem();
+				}
+			}
 			targetListItem = view.getChildAt(targetItem - firstVisibleItem);
 		}
 	};
