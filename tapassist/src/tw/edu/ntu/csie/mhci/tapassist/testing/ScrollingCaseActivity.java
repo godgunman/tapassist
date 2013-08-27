@@ -46,6 +46,7 @@ public class ScrollingCaseActivity extends Activity {
 	private final static int[] LISTVIEW_OFFSET = { 0, 400, 800 };
 
 	private static boolean active = false;
+	private static boolean isMoving = false;
 
 	private RelativeLayout listViewContainerRelativeLayout;
 	private ListView listView;
@@ -337,6 +338,7 @@ public class ScrollingCaseActivity extends Activity {
 
 			switch (action) {
 			case MotionEvent.ACTION_DOWN:
+				isMoving = false;
 				firstTouchX = x;
 				firstTouchY = y;
 				LogHelper.wirteLogTouchEvent(ScrollingCaseActivity.this, event,
@@ -345,16 +347,23 @@ public class ScrollingCaseActivity extends Activity {
 
 			case MotionEvent.ACTION_MOVE:
 				// ignore this case
-				if (Math.abs(x - firstTouchX) < TOUCH_SLOP
+
+				if (isMoving) {
+					LogHelper.wirteLogTouchEvent(ScrollingCaseActivity.this,
+							event, v, "is_moving");
+				} else if (Math.abs(x - firstTouchX) < TOUCH_SLOP
 						&& Math.abs(y - firstTouchY) < TOUCH_SLOP) {
 					LogHelper.wirteLogTouchEvent(ScrollingCaseActivity.this,
 							event, v, "in_slop");
 					return true;
+				} else {
+					isMoving = true;
+					LogHelper.wirteLogTouchEvent(ScrollingCaseActivity.this,
+							event, v, "over_slop");
 				}
-				LogHelper.wirteLogTouchEvent(ScrollingCaseActivity.this, event,
-						v, "over_slop");
 				break;
 			case MotionEvent.ACTION_UP:
+				isMoving = false;
 				if (Math.abs(x - firstTouchX) < TOUCH_SLOP
 						&& Math.abs(y - firstTouchY) < TOUCH_SLOP) {
 					Media.play(ScrollingCaseActivity.this, R.raw.miss);
