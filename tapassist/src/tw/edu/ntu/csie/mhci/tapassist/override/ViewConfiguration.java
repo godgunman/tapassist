@@ -19,6 +19,8 @@ package tw.edu.ntu.csie.mhci.tapassist.override;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import tw.edu.ntu.csie.mhci.tapassist.utils.Reflection;
+
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -249,7 +251,7 @@ public class ViewConfiguration {
         mOverflingDistance = OVERFLING_DISTANCE;
         mFadingMarqueeEnabled = true;
     }
-
+    
     /**
      * Creates a new configuration for the specified context. The configuration depends on
      * various parameters of the context, like the dimension of the display or the density
@@ -284,29 +286,16 @@ public class ViewConfiguration {
         final WindowManager win = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
         final Display display = win.getDefaultDisplay();
         final Point size = new Point();
-        display.getRealSize(size);
+
+        //TODO(ggm)
+//        display.getRealSize(size);
+        Reflection.invokeHideMethod(display, "getRealSize", size);
+        
         mMaximumDrawingCacheSize = 4 * size.x * size.y;
 
         mOverscrollDistance = (int) (sizeAndDensity * OVERSCROLL_DISTANCE + 0.5f);
         mOverflingDistance = (int) (sizeAndDensity * OVERFLING_DISTANCE + 0.5f);
 
-
-        /**
-         * TODO we can use reflection to call hidden class.
-         *  Method methodGetWindowManagerService = Class.forName("android.view.WindowManagerGlobal").getMethod("getWindowManagerService");
-         *	Object objectIWindowManager = methodGetWindowManagerService.invoke(null, null);
-         *
-         *  #original code 
- 		 *   IWindowManager wm = WindowManagerGlobal.getWindowManagerService();
-         *   try {
-         *       sHasPermanentMenuKey = !wm.hasSystemNavBar() && !wm.hasNavigationBar();
-         *       sHasPermanentMenuKeySet = true;
-         *    } catch (RemoteException ex) {
-         *       sHasPermanentMenuKey = false;
-         *    }
-         *
-         *
-         */
 		if (!sHasPermanentMenuKeySet) {
 			sHasPermanentMenuKey = false;
 			sHasPermanentMenuKeySet = true;

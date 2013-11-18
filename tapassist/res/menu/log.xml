@@ -5,5 +5,10 @@
         android:orderInCategory="100"
         android:showAsAction="always"
         android:title="delete"/>
+    <item
+        android:id="@+id/action_log_backup"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:title="backup"/>
 
 </menu>

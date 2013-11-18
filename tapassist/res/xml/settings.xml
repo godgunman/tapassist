@@ -39,6 +39,11 @@
             android:key="tapping_all_task_timeout"
             android:summary="seconds"
             android:title="All Task Timeout" />
+        <EditTextPreference
+            android:defaultValue="30"
+            android:key="tapping_task_number_limit"
+            android:summary="seconds"
+            android:title="Task Number Limit" />
     </PreferenceCategory>
 
 </PreferenceScreen>

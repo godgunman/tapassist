@@ -133,7 +133,7 @@ public class LogHelper {
 			final View view) {
 		JSONObject object = new JSONObject();
 		try {
-			object.put("action", MotionEvent.actionToString(event.getAction()));
+			object.put("action", Reflection.invokeHideMethod(MotionEvent.class, "actionToString", event.getAction()));
 			object.put("time", System.currentTimeMillis());
 
 			JSONArray array = new JSONArray();
@@ -154,9 +154,9 @@ public class LogHelper {
 			object.put("rawY", event.getRawY());
 
 			object.put("buttonState",
-					MotionEvent.buttonStateToString(event.getButtonState()));
+					Reflection.invokeHideMethod(MotionEvent.class, "invokeHideMethod", event.getButtonState()));
 			object.put("metaState",
-					KeyEvent.metaStateToString(event.getMetaState()));
+					Reflection.invokeHideMethod(KeyEvent.class, "metaStateToString", event.getMetaState()));
 			object.put("flags", "0x" + Integer.toHexString(event.getFlags()));
 			object.put("edgeFlags",
 					"0x" + Integer.toHexString(event.getEdgeFlags()));
@@ -196,4 +196,6 @@ public class LogHelper {
 		in.close();
 		out.close();
 	}
+
+
 }

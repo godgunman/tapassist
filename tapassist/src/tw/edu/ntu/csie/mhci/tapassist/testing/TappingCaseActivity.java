@@ -5,8 +5,6 @@ import java.util.Random;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.android.internal.net.VpnConfig;
-
 import tw.edu.ntu.csie.mhci.tapassist.R;
 import tw.edu.ntu.csie.mhci.tapassist.utils.Layout;
 import tw.edu.ntu.csie.mhci.tapassist.utils.LogHelper;
@@ -22,16 +20,15 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
-import android.view.ViewParent;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class TappingCaseActivity extends Activity {
 
 	private static long ALL_TASK_TIMEOUT = 300 * 1000;
 	private static long TOUCH_SLOP = 8;
+	private static long TASK_NUMBER_LIMIT = 30;
 
 	private RelativeLayout outerTapImage;
 	private ImageView tapImage;
@@ -51,6 +48,7 @@ public class TappingCaseActivity extends Activity {
 
 	private float firstOuterTouchX;
 	private float firstOuterTouchY;
+	private boolean isTaskEnd = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +68,8 @@ public class TappingCaseActivity extends Activity {
 					"tapping_all_task_timeout"));
 			TOUCH_SLOP = Long.valueOf(PreferenceHelper.getString(this,
 					"tapping_touch_slop"));
+			TASK_NUMBER_LIMIT = Long.valueOf(PreferenceHelper.getString(this,
+					"tapping_task_number_limit"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -84,6 +84,13 @@ public class TappingCaseActivity extends Activity {
 
 			@Override
 			protected void onPreExecute() {
+				// because taskNum is starting from -1.
+				if (taskNum-1 >= TASK_NUMBER_LIMIT) {
+					isTaskEnd = true;
+					endTask();
+					return;
+				}
+
 				try {
 					Thread.sleep(700);
 				} catch (InterruptedException e) {
@@ -98,7 +105,9 @@ public class TappingCaseActivity extends Activity {
 
 			@Override
 			protected void onPostExecute(Void result) {
-				createTargetImage();
+				if (isTaskEnd == false) {
+					createTargetImage();
+				}
 			}
 
 			@Override
@@ -130,7 +139,7 @@ public class TappingCaseActivity extends Activity {
 
 		final int location[] = { 0, 0 };
 		tapImage.getLocationOnScreen(location);
-		
+
 		Log.d("debug", "targetX=" + targetX + ", " + location[0]);
 		Log.d("debug", "targetY=" + targetY + ", " + location[1]);
 
@@ -147,6 +156,28 @@ public class TappingCaseActivity extends Activity {
 		}
 
 		LogHelper.wirteLogTaskStart(this, "tap", taskNum, data);
+	}
+
+	private void endTask() {
+		isTaskEnd = true;
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("你已經完成了測試囉!!");
+		builder.setPositiveButton("好", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				TappingCaseActivity.this.finish();
+			}
+		});
+
+		AlertDialog dialog = builder.create();
+
+		// TODO(ggm)
+		try {
+			dialog.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private OnTouchListener tapImageTouchListener = new OnTouchListener() {
@@ -343,32 +374,12 @@ public class TappingCaseActivity extends Activity {
 
 			if (startTime == ALL_TASK_TIMEOUT) {
 				runOnUiThread(new Runnable() {
-
 					@Override
 					public void run() {
-						AlertDialog.Builder builder = new AlertDialog.Builder(
-								TappingCaseActivity.this);
-						builder.setTitle("你已經完成了測試囉!!");
-						builder.setPositiveButton("好",
-								new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog,
-											int which) {
-										TappingCaseActivity.this.finish();
-									}
-								});
-
-						AlertDialog dialog = builder.create();
-
-						// TODO(ggm)
-						try {
-							dialog.show();
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-
+						endTask();
 					}
 				});
+				return;
 			}
 		}
 	};

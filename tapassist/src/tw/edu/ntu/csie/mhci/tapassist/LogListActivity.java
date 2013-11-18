@@ -57,7 +57,7 @@ public class LogListActivity extends ListActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.log_list, menu);
+		getMenuInflater().inflate(R.menu.log, menu);
 		return true;
 	}
 
@@ -65,7 +65,7 @@ public class LogListActivity extends ListActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
 		switch (id) {
-		case R.id.log_backup:
+		case R.id.action_log_backup:
 
 			File sdCard = Environment.getExternalStorageDirectory();
 			File backupDir = new File(sdCard.getAbsolutePath()
