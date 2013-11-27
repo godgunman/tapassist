@@ -88,6 +88,23 @@ public class TappingCaseActivity extends Activity {
 				if (taskNum-1 >= TASK_NUMBER_LIMIT) {
 					isTaskEnd = true;
 					endTask();
+
+					JSONObject object = new JSONObject();
+					JSONObject meta = new JSONObject();
+					try {
+						object.put("logType", "task");
+						object.put("time", System.currentTimeMillis());
+						object.put("taskType", "tap");
+						object.put("taskAction", "AllTaskEnd");
+						
+						meta.put("reason", "complete all task");
+						
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					LogHelper.write(getApplicationContext(), object.toString());
 					return;
 				}
 
@@ -377,6 +394,21 @@ public class TappingCaseActivity extends Activity {
 					@Override
 					public void run() {
 						endTask();
+						JSONObject object = new JSONObject();
+						JSONObject meta = new JSONObject();
+						try {
+							object.put("logType", "task");
+							object.put("time", System.currentTimeMillis());
+							object.put("taskType", "tap");
+							object.put("taskAction", "AllTaskEnd");
+							
+							meta.put("reason", "time out");
+							
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						LogHelper.write(getApplicationContext(), object.toString());
 					}
 				});
 				return;

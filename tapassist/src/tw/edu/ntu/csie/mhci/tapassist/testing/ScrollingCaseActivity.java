@@ -325,6 +325,26 @@ public class ScrollingCaseActivity extends Activity {
 			timeCounterText.setText(startTime + " seconds");
 
 			if (startTime == ALL_TASK_TIMEOUT) {
+				
+				JSONObject object = new JSONObject();
+				JSONObject meta = new JSONObject();
+				try {
+					object.put("logType", "task");
+					object.put("time", System.currentTimeMillis());
+					object.put("taskType", "scroll");
+					object.put("taskAction", "AllTaskEnd");
+					
+					meta.put("reason", "all task timeout");
+					
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				LogHelper.write(getApplicationContext(), object.toString());
+
+				
+				
 				runOnUiThread(new Runnable() {
 
 					@Override
